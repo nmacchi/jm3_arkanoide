@@ -17,6 +17,7 @@ import com.jme3.scene.shape.Box;
 
 import com.jme3.texture.Texture;
 import mygame.classes.Arkanoide;
+import mygame.classes.Brick;
 
 /**
  * test
@@ -25,6 +26,9 @@ import mygame.classes.Arkanoide;
 public class Main extends SimpleApplication {
     
     private Arkanoide arkanoide;
+    
+    //private static float brickPositionY = -2.3f;
+    //private static float brickScaleY = 0.15f;
     
     public static void main(String[] args) {
         Main app = new Main();
@@ -85,23 +89,26 @@ public class Main extends SimpleApplication {
         
         float initPositionX= -1.84f;
         float nextPositionZ= -2.8f;
-        float brickWidth = 0.36f;
-        float brickHeight = 0.1f;
+        
         //SUMO 0.36
-        for(int y=0; y <=6; y++){
+        int numLines = 6; 
+        int bricksPerLine = 5;
+        
+        for(int y=0; y <=numLines; y++){
             float nextPositionX = initPositionX;
-            for(int i=0; i<=5; i++){
-                Spatial spatial = assetManager.loadModel("Models/Brick/Brick.mesh.xml");
-                spatial.setName("brick_"+y+i);
-                spatial.setLocalScale(brickWidth, 0.15f, brickHeight);
+            for(int i=0; i<=bricksPerLine; i++){
+                
+                Brick brick = new Brick(assetManager, nextPositionX, nextPositionZ);
+                brick.setName("brick_"+y+i);
             
-                spatial.setLocalTranslation(nextPositionX, -2.3f, nextPositionZ);
+                nextPositionX +=  (brick.getWidth() * 2) + 0.01f;
             
-                nextPositionX +=  (brickWidth * 2) + 0.01f;
-            
-                rootNode.attachChild(spatial);
+                rootNode.attachChild(brick.getBrick());
+                
+                if(i == bricksPerLine) 
+                    nextPositionZ -= (brick.getHeight() * 2) + 0.03f;
             }
-            nextPositionZ -= (brickHeight * 2) + 0.01f;   
+            
         }
                 
         

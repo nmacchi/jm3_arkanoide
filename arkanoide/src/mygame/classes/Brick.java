@@ -16,15 +16,29 @@ import com.jme3.scene.Spatial;
 public class Brick {
     
     private static final String model = "Models/Brick/Brick.mesh.xml";
-    private static final float brickWidth = 0.36f;
-    private static final float brickHeight = 0.1f;
+    
+    private static float brickWidth = 0.36f;
+    private static float brickHeight = 0.1f;
+    private static float brickScaleY = 0.15f;
+    
+    private static float brickPositionY = -2.3f;
+    
+    
     private Spatial brick;
+    private String name;
+    
     
     private Vector3f position; 
     private Vector3f scale;
     
-    Brick(AssetManager assetManager){
+    public Brick(AssetManager assetManager, float positionX, float positionZ){
         brick = assetManager.loadModel(model);
+        
+        this.position = new Vector3f(positionX, brickPositionY, positionZ);
+        this.scale = new Vector3f(brickWidth,brickScaleY,brickHeight);
+        
+        brick.setLocalScale(scale);
+        brick.setLocalTranslation(position);
     }
 
     public Spatial getBrick() {
@@ -51,6 +65,19 @@ public class Brick {
         this.scale = scale;
     }
     
+    public void setName(String name){
+        this.name = name;
+    }
     
+    public String getName(){
+        return name;
+    }
     
+    public float getWidth(){
+        return brickWidth;
+    }
+    
+    public float getHeight(){
+        return brickHeight;
+    }
 }
