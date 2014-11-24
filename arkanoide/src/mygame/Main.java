@@ -16,8 +16,10 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 
 import com.jme3.texture.Texture;
+import java.util.List;
 import mygame.classes.Arkanoide;
 import mygame.classes.Brick;
+import mygame.classes.Floor;
 
 /**
  * test
@@ -26,7 +28,7 @@ import mygame.classes.Brick;
 public class Main extends SimpleApplication {
     
     private Arkanoide arkanoide;
-    
+    private List<Brick> brickList;
     //private static float brickPositionY = -2.3f;
     //private static float brickScaleY = 0.15f;
     
@@ -48,8 +50,6 @@ public class Main extends SimpleApplication {
         rootNode.attachChild(ball);
         
 
-        
-        
         Box box = new Box(2.49f, 0.1f, 3.5f);
         Geometry floor = new Geometry("Floor", box);
         floor.setLocalTranslation(-0.01f, -2.5f, -2.3f);
@@ -58,6 +58,9 @@ public class Main extends SimpleApplication {
         floorMaterial.setTexture("ColorMap",floorText);
         floor.setMaterial(floorMaterial);
         rootNode.attachChild(floor);
+        
+        
+        new Floor(assetManager, new Vector3f(2.49f, 0.1f, 3.5f));
         
         Box goldenBox1 = new Box(0.15f, 0.1f, 3.5f);
         Geometry goldenBox1_geo = new Geometry("Left_golden_brick", goldenBox1);
