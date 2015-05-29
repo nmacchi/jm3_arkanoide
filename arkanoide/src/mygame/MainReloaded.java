@@ -6,9 +6,13 @@ package mygame;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 import com.jme3.texture.Texture;
+import java.util.Arrays;
+import java.util.List;
+import mygame.classes.Brick;
 
 /**
  *
@@ -24,6 +28,10 @@ public class MainReloaded extends SimpleApplication{
     @Override
     public void simpleInitApp() {
         setCamPosition();
+        
+        List<ColorRGBA> brickColors = Arrays.asList(ColorRGBA.Green, ColorRGBA.Magenta, ColorRGBA.Blue, ColorRGBA.Yellow, ColorRGBA.Red, ColorRGBA.Gray);
+        
+        
         
         Box box = new Box(2.49f, 3.5f, 0.1f);
         Geometry floor = new Geometry("Floor", box);
@@ -60,6 +68,28 @@ public class MainReloaded extends SimpleApplication{
         goldenBox3_Material.setTexture("ColorMap", goldenBox3_Text);
         goldenBox3_geo.setMaterial(goldenBox3_Material);
         rootNode.attachChild(goldenBox3_geo);
+        
+        
+        float initPositionX= -1.84f;
+        float nextPositionY= -2.8f;
+        
+        //SUMO 0.36
+        int numLines = 6; 
+        int bricksPerLine = 5;
+        
+        Box brickBox = new Box(0.36f, 0.15f, 0.1f);
+        Geometry brick = new Geometry("brick", brickBox);
+        brick.setLocalTranslation(-2.2f, 0.0f, 0.25f);
+        
+        Material brickMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        brickMaterial.setColor("Color", ColorRGBA.Blue);
+        brick.setMaterial(brickMaterial);
+        rootNode.attachChild(brick);
+        
+        
+        
+        
+        
         
     }
     
