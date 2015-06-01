@@ -6,16 +6,15 @@ import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.FastMath;
-import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
-import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 
 import com.jme3.texture.Texture;
+import java.util.Arrays;
 import java.util.List;
 import mygame.classes.Arkanoide;
 import mygame.classes.Brick;
@@ -39,15 +38,25 @@ public class Main extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
+        //Nodes
+        Node nodeArkanoide = new Node("arkanoide");
+        Node nodeBall = new Node("ball");
+        Node nodeBrick = new Node("brick");
+        
+        rootNode.attachChild(nodeArkanoide);
+        rootNode.attachChild(nodeBall);
+        rootNode.attachChild(nodeBrick);
+        
         arkanoide = new Arkanoide(assetManager);
-        rootNode.attachChild(arkanoide.getSpatial());
+        nodeArkanoide.attachChild(arkanoide.getSpatial());
         
         setCamPosition();
         
         Spatial ball = assetManager.loadModel("Models/Ball/Ball.mesh.xml");
         ball.setLocalTranslation(0.0f, -2.3f, 1f);
         ball.setLocalScale(0.07f);
-        rootNode.attachChild(ball);
+        nodeBall.attachChild(ball);
+        nodeArkanoide.attachChild(ball);
         
 
         Box box = new Box(2.49f, 0.1f, 3.5f);
@@ -96,20 +105,31 @@ public class Main extends SimpleApplication {
         //SUMO 0.36
         int numLines = 6; 
         int bricksPerLine = 5;
-        
+        List<ColorRGBA> bricksColors = Arrays.asList(ColorRGBA.Blue, ColorRGBA.Red, ColorRGBA.Green, ColorRGBA.Yellow, ColorRGBA.Magenta, ColorRGBA.Cyan, ColorRGBA.Gray);
+       
         for(int y=0; y <=numLines; y++){
             float nextPositionX = initPositionX;
             for(int i=0; i<=bricksPerLine; i++){
                 
-                Brick brick = new Brick(assetManager, nextPositionX, nextPositionZ);
-                brick.setName("brick_"+y+i);
+                //Brick brick = new Brick(assetManager, nextPositionX, nextPositionZ);
+                Box brick = new Box(0.36f, 0.15f, 0.1f);
+                Geometry brickGeometry = new Geometry();
+                brickGeometry.setMesh(brick);
+                brickGeometry.setName("brick_"+y+i);
+                brickGeometry.setLocalTranslation(nextPositionX, -2.3f, nextPositionZ);
+                
+                Material brickMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+                brickMaterial.setColor("Color", bricksColors.get(y));
+                brickGeometry.setMaterial(brickMaterial);
+                
+                nodeBrick.attachChild(brickGeometry);
             
-                nextPositionX +=  (brick.getWidth() * 2) + 0.01f;
+                nextPositionX +=  (0.36f * 2) + 0.01f;
             
-                rootNode.attachChild(brick.getBrick());
+                
                 
                 if(i == bricksPerLine) 
-                    nextPositionZ -= (brick.getHeight() * 2) + 0.03f;
+                    nextPositionZ -= (0.1f * 2) + 0.03f;
             }
             
         }
@@ -138,7 +158,7 @@ public class Main extends SimpleApplication {
     }
     
     private void setCamPosition(){
-        flyCam.setEnabled(false);
+        //flyCam.setEnabled(false);
         cam.setLocation(new Vector3f(0,4f,4f));
         cam.lookAt(new Vector3f(0.0f, -2.3f, -2f), new Vector3f(0,0,0));
     }

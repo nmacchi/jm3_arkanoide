@@ -5,9 +5,11 @@
 package mygame.classes;
 
 import com.jme3.asset.AssetManager;
-import com.jme3.math.FastMath;
+import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
-import com.jme3.scene.Spatial;
+import com.jme3.scene.Geometry;
+import com.jme3.scene.shape.Box;
 
 /**
  *
@@ -24,7 +26,7 @@ public class Brick {
     private static float brickPositionY = -2.3f;
     
     
-    private Spatial brick;
+    private Geometry brick;
     private String name;
     
     
@@ -32,7 +34,14 @@ public class Brick {
     private Vector3f scale;
     
     public Brick(AssetManager assetManager, float positionX, float positionZ){
-        brick = assetManager.loadModel(model);
+        //brick = assetManager.loadModel(model); 
+        Box box = new Box();
+        brick = new Geometry();
+        brick.setMesh(box);
+        
+        Material brickMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        brickMaterial.setColor("Color", ColorRGBA.Blue);
+        brick.setMaterial(brickMaterial);
         
         this.position = new Vector3f(positionX, brickPositionY, positionZ);
         this.scale = new Vector3f(brickWidth,brickScaleY,brickHeight);
@@ -41,11 +50,11 @@ public class Brick {
         brick.setLocalTranslation(position);
     }
 
-    public Spatial getBrick() {
+    public Geometry getBrick() {
         return brick;
     }
 
-    public void setBrick(Spatial brick) {
+    public void setBrick(Geometry brick) {
         this.brick = brick;
     }
 
