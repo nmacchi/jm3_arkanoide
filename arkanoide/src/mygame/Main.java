@@ -4,7 +4,6 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
-import com.jme3.input.controls.Trigger;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
@@ -14,13 +13,13 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 
 import com.jme3.texture.Texture;
 import java.util.Arrays;
 import java.util.List;
 import mygame.classes.Arkanoide;
+import mygame.classes.Ball;
 import mygame.classes.Brick;
 import mygame.classes.Floor;
 
@@ -33,6 +32,7 @@ public class Main extends SimpleApplication {
 
     //3D objects
     private Arkanoide arkanoide;
+    private Ball ball;
     private List<Brick> brickList;
     //Nodes
     
@@ -60,19 +60,16 @@ public class Main extends SimpleApplication {
         setSceneLights();
         
         rootNode.attachChild(pivot);
-
+        
+        ball = new Ball(assetManager);
+        pivot.attachChild(ball);
+        rootNode.attachChild(ball);
+        
         arkanoide = new Arkanoide(assetManager);
-        nodeArkanoide.attachChild(arkanoide.getSpatial());
-        
+        nodeArkanoide.attachChild(arkanoide.getSpatial());        
         pivot.attachChild(nodeArkanoide);
+        
 
-        Spatial ball = assetManager.loadModel("Models/Ball/Ball.mesh.xml");
-        ball.setLocalTranslation(0.0f, -2.3f, 1f);
-        ball.setLocalScale(0.07f);
-        nodeBall.attachChild(ball);
-        
-        pivot.attachChild(nodeBall);
-        
         Box box = new Box(2.49f, 0.1f, 3.5f);
         Geometry floor = new Geometry("Floor", box);
 
