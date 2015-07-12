@@ -5,13 +5,13 @@
 package mygame.classes;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Sphere;
-import com.jme3.texture.Texture;
 
 /**
  *
@@ -23,11 +23,12 @@ public class Ball extends Node{
     private static final float BALL_SCALE = 0.07f;
     private static String TEXTURE = "Textures/metal_texture_sphere.jpg";
     
-    //private static final Spatial ball;
     private static Geometry geometry;
     private static Sphere ball;
     private Material material;
  
+    private RigidBodyControl ballPhysics;
+    
     
     public Ball(AssetManager assetManager){
        
@@ -45,6 +46,7 @@ public class Ball extends Node{
         material.setFloat("Shininess", 64f);
         
         geometry.setMaterial(material);
+                
         this.attachChild(geometry);
         
     }
@@ -72,6 +74,24 @@ public class Ball extends Node{
     public static void setBall(Sphere ball) {
         Ball.ball = ball;
     }
+
+    public RigidBodyControl getBallPhysics() {
+        return ballPhysics;
+    }
+
+    public void setBallPhysics(RigidBodyControl ballPhysics) {
+        this.ballPhysics = ballPhysics;
+    }
     
+    public RigidBodyControl moveBall(){
+        ballPhysics = new RigidBodyControl(5f);
+        geometry.addControl(ballPhysics);
+        
+        ballPhysics.setCcdSweptSphereRadius(BALL_SCALE);
+        ballPhysics.setCcdMotionThreshold(0.001f);                
+        ballPhysics.setLinearVelocity(INITIAL_POSITION);
+        
+        return ballPhysics;
+    }
     
 }

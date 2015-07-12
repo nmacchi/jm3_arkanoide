@@ -1,6 +1,7 @@
 package mygame;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.bullet.BulletAppState;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
@@ -21,7 +22,7 @@ import java.util.List;
 import mygame.classes.Arkanoide;
 import mygame.classes.Ball;
 import mygame.classes.Brick;
-import mygame.classes.Floor;
+import mygame.classes.GameField;
 
 /**
  * test
@@ -34,15 +35,20 @@ public class Main extends SimpleApplication {
     private Arkanoide arkanoide;
     private Ball ball;
     private List<Brick> brickList;
-    //Nodes
+    private GameField gameField;
     
+    //Nodes 
     Node pivot = new Node("pivot");
     Node nodeArkanoide = new Node("arkanoide");
     Node nodeBall = new Node("ball");
     Node nodeBrick = new Node("brick");
+    
     //Key Mappings
     private static final String MAPPING_LEFT = "left";
     private static final String MAPPING_RIGHT = "right";
+    
+    //Physics app state
+    private BulletAppState bulletAppState;
     
     private static final float speed = 2.0f;
     
@@ -55,6 +61,10 @@ public class Main extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
+        //init physics
+        bulletAppState = new BulletAppState();
+        stateManager.attach(bulletAppState);
+        
         initKeys();
         setCamPosition();
         setSceneLights();
@@ -69,54 +79,10 @@ public class Main extends SimpleApplication {
         nodeArkanoide.attachChild(arkanoide.getSpatial());        
         pivot.attachChild(nodeArkanoide);
         
+        gameField = new GameField(assetManager);
+        rootNode.attachChild(gameField);
+        
 
-        Box box = new Box(2.49f, 0.1f, 3.5f);
-        Geometry floor = new Geometry("Floor", box);
-
-        floor.setLocalTranslation(-0.01f, -2.5f, -2.3f);
-        Material floorMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        Texture floorText = assetManager.loadTexture("Textures/floor2.jpg");
-
-        floorMaterial.setTexture("ColorMap", floorText);
-        floor.setMaterial(floorMaterial);
-
-        rootNode.attachChild(floor);
-
-        new Floor(assetManager,new Vector3f(2.49f, 0.1f, 3.5f));
-
-        Box goldenBox1 = new Box(0.15f, 0.1f, 3.5f);
-        Geometry goldenBox1_geo = new Geometry("Left_golden_brick", goldenBox1);
-
-        goldenBox1_geo.setLocalTranslation(-2.35f, -2.3f, -2.3f);
-        Material goldenBox1_Material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        Texture goldenBox1_Text = assetManager.loadTexture("Textures/golden.jpg");
-
-        goldenBox1_Material.setTexture("ColorMap", goldenBox1_Text);
-        goldenBox1_geo.setMaterial(goldenBox1_Material);
-
-        rootNode.attachChild(goldenBox1_geo);
-        //Box goldenBox2 = new Box(0.15f, 0.1f, 3.5f);
-        Geometry goldenBox2_geo = new Geometry("Right_golden_brick", goldenBox1);
-
-        goldenBox2_geo.setLocalTranslation(2.32f, -2.3f, -2.3f);
-        Material goldenBox2_Material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        Texture goldenBox2_Text = assetManager.loadTexture("Textures/golden.jpg");
-
-        goldenBox2_Material.setTexture("ColorMap", goldenBox2_Text);
-        goldenBox2_geo.setMaterial(goldenBox2_Material);
-
-        rootNode.attachChild(goldenBox2_geo);
-        Box goldenBox2 = new Box(2.2f, 0.1f, 0.15f);
-        Geometry goldenBox3_geo = new Geometry("Top_golden_brick", goldenBox2);
-
-        goldenBox3_geo.setLocalTranslation(0.0f, -2.3f, -5.65f);
-        Material goldenBox3_Material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        Texture goldenBox3_Text = assetManager.loadTexture("Textures/golden.jpg");
-
-        goldenBox3_Material.setTexture("ColorMap", goldenBox3_Text);
-        goldenBox3_geo.setMaterial(goldenBox3_Material);
-
-        rootNode.attachChild(goldenBox3_geo);
         float initPositionX = -1.84f;
         float nextPositionZ = -2.8f;
         //SUMO 0.36
@@ -208,4 +174,8 @@ public class Main extends SimpleApplication {
             }
         }
     };
+    
+    private void shootBall(){
+        
+    }
 }

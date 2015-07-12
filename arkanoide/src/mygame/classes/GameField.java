@@ -19,7 +19,7 @@ import com.jme3.texture.Texture;
 public class GameField extends Node{
     
     /*Side borders dimensions*/
-    private static float S_BORDER_WIDTH = 2.49f;
+    private static float S_BORDER_WIDTH = 0.15f;
     private static float S_BORDER_HEIGHT = 0.1f;
     private static float S_BORDER_LENGTH = 3.5f;
     
@@ -42,9 +42,13 @@ public class GameField extends Node{
     /*Positioning*/
     private static final Vector3f R_BORDER_POSITION = new Vector3f(2.32f, -2.3f, -2.3f);
     private static final Vector3f L_BORDER_POSITION = new Vector3f(-2.35f, -2.3f, -2.3f);
-    private static final Vector3f T_BORDER_POSITION = new Vector3f(2.2f, 0.1f, 0.15f);
+    private static final Vector3f T_BORDER_POSITION = new Vector3f(0.0f, -2.3f, -5.65f);
     
-    GameField(AssetManager assetManager){
+    public GameField(){
+        
+    }
+    
+    public GameField(AssetManager assetManager){
         floor = new Floor(assetManager);
         
         topBorder = new Box(T_BORDER_WIDTH, T_BORDER_HEIGHT, T_BORDER_LENGTH);
@@ -54,7 +58,7 @@ public class GameField extends Node{
         //Texture for the boxes 
         boxTexture = assetManager.loadTexture("Textures/golden.jpg");
         material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        material.setTexture("borderTexture", boxTexture);
+        material.setTexture("ColorMap", boxTexture);
         
         //Create geometries
         gRightBorder = new Geometry("rightBorder",rightBorder);
@@ -69,6 +73,7 @@ public class GameField extends Node{
         gTopBorder.setLocalTranslation(T_BORDER_POSITION);
         gTopBorder.setMaterial(material);
         
+        this.attachChild(floor.getGeometry());
         this.attachChild(gRightBorder);
         this.attachChild(gLeftBorder);
         this.attachChild(gTopBorder);
