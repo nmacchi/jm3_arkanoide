@@ -7,13 +7,14 @@ package mygame.classes;
 import com.jme3.asset.AssetManager;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 
 /**
  *
  * @author nicolas
  */
-public final class Arkanoide {
+public class Arkanoide {
     
     private Vector3f position = new Vector3f(0.0f, -2.3f, 1.15f);
     private float scale = new Float(0.2f);
@@ -55,4 +56,8 @@ public final class Arkanoide {
         this.spatial = spatial;
     }
     
+    
+    private void shootBall(Ball ball){
+        
+    }
 }

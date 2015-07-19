@@ -23,7 +23,7 @@ public class Ball extends Node{
     private static final float BALL_SCALE = 0.07f;
     private static String TEXTURE = "Textures/metal_texture_sphere.jpg";
     
-    private static Geometry geometry;
+    private Geometry geometry;
     private static Sphere ball;
     private Material material;
  
@@ -59,12 +59,12 @@ public class Ball extends Node{
         this.material = material;
     }
 
-    public static Geometry getGeometry() {
+    public Geometry getGeometry() {
         return geometry;
     }
 
-    public static void setGeometry(Geometry geometry) {
-        Ball.geometry = geometry;
+    public void setGeometry(Geometry geometry) {
+        this.geometry = geometry;
     }
 
     public static Sphere getBall() {

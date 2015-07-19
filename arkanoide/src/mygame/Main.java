@@ -40,7 +40,7 @@ public class Main extends SimpleApplication {
     //Nodes 
     Node pivot = new Node("pivot");
     Node nodeArkanoide = new Node("arkanoide");
-    Node nodeBall = new Node("ball");
+    //Node nodeBall = new Node("ball");
     Node nodeBrick = new Node("brick");
     
     //Key Mappings
@@ -62,22 +62,27 @@ public class Main extends SimpleApplication {
     @Override
     public void simpleInitApp() {
         //init physics
-        bulletAppState = new BulletAppState();
-        stateManager.attach(bulletAppState);
+//        bulletAppState = new BulletAppState();
+//        stateManager.attach(bulletAppState);
         
         initKeys();
         setCamPosition();
         setSceneLights();
-        
-        rootNode.attachChild(pivot);
+
         
         ball = new Ball(assetManager);
-        pivot.attachChild(ball);
+        //pivot.attachChild(ball.getGeometry());
         rootNode.attachChild(ball);
         
         arkanoide = new Arkanoide(assetManager);
-        nodeArkanoide.attachChild(arkanoide.getSpatial());        
-        pivot.attachChild(nodeArkanoide);
+        nodeArkanoide.attachChild(arkanoide.getSpatial());
+        nodeArkanoide.attachChild(ball);
+        
+        rootNode.attachChild(nodeArkanoide);
+        //nodeArkanoide.attachChild(arkanoide.getSpatial());        
+        //pivot.attachChild(nodeArkanoide);
+        
+        //rootNode.attachChild(pivot);
         
         gameField = new GameField(assetManager);
         rootNode.attachChild(gameField);
@@ -165,17 +170,15 @@ public class Main extends SimpleApplication {
     private AnalogListener analogListener = new AnalogListener() {
         public void onAnalog(String name, float value, float tpf) {
             //Vector3f v = arkanoide.getSpatial().getLocalTranslation();
-            Vector3f v = pivot.getLocalTranslation();
+            Vector3f v = nodeArkanoide.getLocalTranslation();
             if (name.equals(MAPPING_LEFT)) {
-                pivot.setLocalTranslation(v.x - value*speed, v.y, v.z);
+                nodeArkanoide.setLocalTranslation(v.x - value*speed, v.y, v.z);
             }
             if (name.equals(MAPPING_RIGHT)) {
-                pivot.setLocalTranslation(v.x + value*speed, v.y, v.z);
+                nodeArkanoide.setLocalTranslation(v.x + value*speed, v.y, v.z);
             }
         }
     };
     
-    private void shootBall(){
-        
-    }
+    
 }
