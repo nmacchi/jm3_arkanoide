@@ -46,7 +46,9 @@ public class Ball extends Node{
         material.setFloat("Shininess", 64f);
         
         geometry.setMaterial(material);
-                
+        
+        
+        
         this.attachChild(geometry);
         
     }
@@ -83,15 +85,6 @@ public class Ball extends Node{
         this.ballPhysics = ballPhysics;
     }
     
-    public RigidBodyControl moveBall(){
-        ballPhysics = new RigidBodyControl(5f);
-        geometry.addControl(ballPhysics);
-        
-        ballPhysics.setCcdSweptSphereRadius(BALL_SCALE);
-        ballPhysics.setCcdMotionThreshold(0.001f);                
-        ballPhysics.setLinearVelocity(INITIAL_POSITION);
-        
-        return ballPhysics;
-    }
+   
     
 }

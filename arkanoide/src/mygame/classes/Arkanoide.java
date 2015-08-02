@@ -16,6 +16,8 @@ import com.jme3.scene.Spatial;
  */
 public class Arkanoide {
     
+    
+    
     private Vector3f position = new Vector3f(0.0f, -2.3f, 1.15f);
     private float scale = new Float(0.2f);
     private Spatial spatial;
@@ -57,7 +59,10 @@ public class Arkanoide {
     }
     
     
-    private void shootBall(Ball ball){
-        
+    public void shootBall(Ball ball, Node nodeArkanoide){
+        //nodeArkanoide.detachChild(ball);
+        System.out.println(new Vector3f(ball.getLocalTranslation().getX(), -2.3f, -5f).mult(1));
+        ball.getBallPhysics().setLinearVelocity(new Vector3f(ball.getLocalTranslation().getX(), -2.3f, -5f).mult(20));
+        //ball.addControl(ball.getBallPhysics());
     }
 }

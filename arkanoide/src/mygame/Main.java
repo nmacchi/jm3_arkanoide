@@ -3,6 +3,7 @@ package mygame;
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.input.KeyInput;
+import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.AmbientLight;
@@ -16,13 +17,13 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
 
-import com.jme3.texture.Texture;
 import java.util.Arrays;
 import java.util.List;
 import mygame.classes.Arkanoide;
 import mygame.classes.Ball;
 import mygame.classes.Brick;
 import mygame.classes.GameField;
+import mygame.classes.keyMappings.KeyMappings;
 
 /**
  * test
@@ -36,6 +37,10 @@ public class Main extends SimpleApplication {
     private Ball ball;
     private List<Brick> brickList;
     private GameField gameField;
+   
+    private Vector3f destino = new Vector3f(2.49f,-2.3f,-5f);
+    private Vector3f posicion = new Vector3f(0,0,0);
+    private Vector3f direccion = new Vector3f(0,0,0);
     
     //Nodes 
     Node pivot = new Node("pivot");
@@ -43,14 +48,8 @@ public class Main extends SimpleApplication {
     //Node nodeBall = new Node("ball");
     Node nodeBrick = new Node("brick");
     
-    //Key Mappings
-    private static final String MAPPING_LEFT = "left";
-    private static final String MAPPING_RIGHT = "right";
-    
     //Physics app state
     private BulletAppState bulletAppState;
-    
-    private static final float speed = 2.0f;
     
     //private static float brickPositionY = -2.3f;
     //private static float brickScaleY = 0.15f;
@@ -62,8 +61,8 @@ public class Main extends SimpleApplication {
     @Override
     public void simpleInitApp() {
         //init physics
-//        bulletAppState = new BulletAppState();
-//        stateManager.attach(bulletAppState);
+        bulletAppState = new BulletAppState();
+        stateManager.attach(bulletAppState);
         
         initKeys();
         setCamPosition();
@@ -76,7 +75,7 @@ public class Main extends SimpleApplication {
         
         arkanoide = new Arkanoide(assetManager);
         nodeArkanoide.attachChild(arkanoide.getSpatial());
-        nodeArkanoide.attachChild(ball);
+        //nodeArkanoide.attachChild(ball);
         
         rootNode.attachChild(nodeArkanoide);
         //nodeArkanoide.attachChild(arkanoide.getSpatial());        
@@ -87,6 +86,13 @@ public class Main extends SimpleApplication {
         gameField = new GameField(assetManager);
         rootNode.attachChild(gameField);
         
+        
+        //Prueba
+        posicion = ball.getLocalTranslation();
+        
+        Vector3f A = new Vector3f(ball.getLocalTranslation().getX()+5, -2.3f, ball.getLocalTranslation().getZ());
+        
+        direccion = destino.add(posicion).normalize();
 
         float initPositionX = -1.84f;
         float nextPositionZ = -2.8f;
@@ -94,9 +100,7 @@ public class Main extends SimpleApplication {
         int numLines = 6;
         int bricksPerLine = 5;
         List<ColorRGBA> bricksColors = Arrays.asList(ColorRGBA.Blue, ColorRGBA.Red, ColorRGBA.Green, ColorRGBA.Yellow, ColorRGBA.Magenta, ColorRGBA.Cyan, ColorRGBA.Gray);
-        for (int y = 0;
-                y <= numLines;
-                y++) {
+        for (int y = 0; y <= numLines; y++) {
             float nextPositionX = initPositionX;
             for (int i = 0; i <= bricksPerLine; i++) {
 
@@ -129,6 +133,9 @@ public class Main extends SimpleApplication {
     @Override
     public void simpleUpdate(float tpf) {
         //TODO: add update code
+        ball.move(new Vector3f(5f,ball.getLocalTranslation().getY(),-5.5f).mult(0.001f));
+        
+        
     }
 
     @Override
@@ -159,11 +166,14 @@ public class Main extends SimpleApplication {
      * Register keys
      */
     private void initKeys() {
-        inputManager.addMapping(MAPPING_LEFT, new KeyTrigger(KeyInput.KEY_LEFT));
-        inputManager.addMapping(MAPPING_RIGHT, new KeyTrigger(KeyInput.KEY_RIGHT));
+        inputManager.addMapping(KeyMappings.MAPPING_LEFT, new KeyTrigger(KeyInput.KEY_LEFT));
+        inputManager.addMapping(KeyMappings.MAPPING_RIGHT, new KeyTrigger(KeyInput.KEY_RIGHT));
+        inputManager.addMapping(KeyMappings.MAPPING_SHOOT, new KeyTrigger(KeyInput.KEY_SPACE));
 
-        inputManager.addListener(analogListener, MAPPING_LEFT, MAPPING_RIGHT);
+        inputManager.addListener(analogListener, KeyMappings.MAPPING_LEFT, KeyMappings.MAPPING_RIGHT);
+        inputManager.addListener(actionListener, KeyMappings.MAPPING_SHOOT);
     }
+    
     /**
      * Listeners
      */
@@ -171,14 +181,25 @@ public class Main extends SimpleApplication {
         public void onAnalog(String name, float value, float tpf) {
             //Vector3f v = arkanoide.getSpatial().getLocalTranslation();
             Vector3f v = nodeArkanoide.getLocalTranslation();
-            if (name.equals(MAPPING_LEFT)) {
+            if (name.equals(KeyMappings.MAPPING_LEFT)) {
                 nodeArkanoide.setLocalTranslation(v.x - value*speed, v.y, v.z);
             }
-            if (name.equals(MAPPING_RIGHT)) {
+            if (name.equals(KeyMappings.MAPPING_RIGHT)) {
                 nodeArkanoide.setLocalTranslation(v.x + value*speed, v.y, v.z);
             }
         }
     };
     
-    
+    private ActionListener actionListener = new ActionListener(){
+
+        public void onAction(String name, boolean isPressed, float tpf) {
+            if(name.equals(KeyMappings.MAPPING_SHOOT) && !isPressed){
+                System.out.println("llega");
+                arkanoide.shootBall(ball, nodeArkanoide);
+                bulletAppState.getPhysicsSpace().add(ball);
+            }
+        }
+        
+    };
+            
 }
