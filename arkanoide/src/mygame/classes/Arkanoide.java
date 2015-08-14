@@ -5,31 +5,31 @@
 package mygame.classes;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.collision.CollisionResults;
 import com.jme3.math.FastMath;
+import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import java.util.List;
 
 /**
  *
  * @author nicolas
  */
 public class Arkanoide {
-    
-    
-    
+
     private Vector3f position = new Vector3f(0.0f, -2.3f, 1.15f);
     private float scale = new Float(0.2f);
     private Spatial spatial;
     private String model = "Models/Arkanoide/Arkanoide.mesh.xml";
-    
-    public Arkanoide(){
-        
+
+    public Arkanoide() {
     }
-    
-    public Arkanoide(AssetManager assetManager){
+
+    public Arkanoide(AssetManager assetManager) {
         spatial = assetManager.loadModel(model);
-        spatial.rotate(0,90*FastMath.DEG_TO_RAD,90*FastMath.DEG_TO_RAD);
+        spatial.rotate(0, 90 * FastMath.DEG_TO_RAD, 90 * FastMath.DEG_TO_RAD);
         spatial.setLocalScale(scale);
         spatial.setLocalTranslation(position);
     }
@@ -57,12 +57,33 @@ public class Arkanoide {
     public void setSpatial(Spatial spatial) {
         this.spatial = spatial;
     }
-    
-    
-    public void shootBall(Ball ball, Node nodeArkanoide){
-        //nodeArkanoide.detachChild(ball);
-        System.out.println(new Vector3f(ball.getLocalTranslation().getX(), -2.3f, -5f).mult(1));
-        ball.getBallPhysics().setLinearVelocity(new Vector3f(ball.getLocalTranslation().getX(), -2.3f, -5f).mult(20));
-        //ball.addControl(ball.getBallPhysics());
+
+    public Vector3f shootBall(Ball ball, Node nodeArkanoide) {
+        ball.setDirection(new Vector3f(ball.getLocalTranslation().getX() + 1, ball.getLocalTranslation().getY(), ball.getLocalTranslation().getZ() + (-5.65f)));
+
+        Ray ray = new Ray(ball.getGeometry().getWorldTranslation(), ball.getDirection());
+        CollisionResults collisions = new CollisionResults();
+        
+        List<Spatial> targets = nodeArkanoide.getParent().getChildren(); 
+        
+        for(Spatial target : targets){
+            target.collideWith(ray, collisions);
+        }
+        
+        if(collisions.size() > 0){
+            for(int i = 0; i < collisions.size(); i++){
+                System.out.println(collisions.getCollision(i).getGeometry().getName() + " - ");
+                
+                if(!collisions.getCollision(i).getGeometry().getName().equals("ballMesh")){
+                    System.out.println(collisions.getCollision(i).getGeometry().getName());
+                    return collisions.getCollision(i).getContactPoint();
+                }
+                
+            }
+         
+        }
+       
+        System.out.println("llega");
+        return new Vector3f(0.0f,0.0f,0.0f);
     }
 }

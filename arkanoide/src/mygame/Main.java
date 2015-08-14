@@ -2,6 +2,7 @@ package mygame;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
+import com.jme3.collision.CollisionResults;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
@@ -16,6 +17,7 @@ import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
+import com.jme3.scene.shape.Sphere;
 
 import java.util.Arrays;
 import java.util.List;
@@ -38,9 +40,8 @@ public class Main extends SimpleApplication {
     private List<Brick> brickList;
     private GameField gameField;
    
-    private Vector3f destino = new Vector3f(2.49f,-2.3f,-5f);
-    private Vector3f posicion = new Vector3f(0,0,0);
-    private Vector3f direccion = new Vector3f(0,0,0);
+    CollisionResults collisionResults = new CollisionResults();
+    
     
     //Nodes 
     Node pivot = new Node("pivot");
@@ -61,21 +62,21 @@ public class Main extends SimpleApplication {
     @Override
     public void simpleInitApp() {
         //init physics
-        bulletAppState = new BulletAppState();
-        stateManager.attach(bulletAppState);
+//        bulletAppState = new BulletAppState();
+//        stateManager.attach(bulletAppState);
         
         initKeys();
         setCamPosition();
         setSceneLights();
 
         
-        ball = new Ball(assetManager);
+        ball = new Ball(assetManager); 
         //pivot.attachChild(ball.getGeometry());
         rootNode.attachChild(ball);
         
         arkanoide = new Arkanoide(assetManager);
         nodeArkanoide.attachChild(arkanoide.getSpatial());
-        //nodeArkanoide.attachChild(ball);
+        nodeArkanoide.attachChild(ball);
         
         rootNode.attachChild(nodeArkanoide);
         //nodeArkanoide.attachChild(arkanoide.getSpatial());        
@@ -86,14 +87,6 @@ public class Main extends SimpleApplication {
         gameField = new GameField(assetManager);
         rootNode.attachChild(gameField);
         
-        
-        //Prueba
-        posicion = ball.getLocalTranslation();
-        
-        Vector3f A = new Vector3f(ball.getLocalTranslation().getX()+5, -2.3f, ball.getLocalTranslation().getZ());
-        
-        direccion = destino.add(posicion).normalize();
-
         float initPositionX = -1.84f;
         float nextPositionZ = -2.8f;
         //SUMO 0.36
@@ -133,7 +126,13 @@ public class Main extends SimpleApplication {
     @Override
     public void simpleUpdate(float tpf) {
         //TODO: add update code
-        ball.move(new Vector3f(5f,ball.getLocalTranslation().getY(),-5.5f).mult(0.001f));
+        //ball.move(new Vector3f(ball.getLocalTranslation().getX() + 1, ball.getLocalTranslation().getY(), ball.getLocalTranslation().getZ() + (-3f)).mult(0.01f));
+        
+        //ball.getChild("ballMesh").collideWith(((Geometry)ball.getChild("ballMesh")).getModelBound(), collisionResults);
+        //System.out.println(ball.getLocalTranslation());
+        //if(collisionResults.size() > 0){
+        //    System.out.println(collisionResults.getClosestCollision().getGeometry().getName());
+        //}
         
         
     }
@@ -194,9 +193,21 @@ public class Main extends SimpleApplication {
 
         public void onAction(String name, boolean isPressed, float tpf) {
             if(name.equals(KeyMappings.MAPPING_SHOOT) && !isPressed){
-                System.out.println("llega");
-                arkanoide.shootBall(ball, nodeArkanoide);
-                bulletAppState.getPhysicsSpace().add(ball);
+               
+                Vector3f collision = arkanoide.shootBall(ball, nodeArkanoide);
+                
+                
+                Sphere intersection = new Sphere(32,32,0.05f,true,false);
+                Geometry geometry = new Geometry("intersection", intersection);
+                geometry.setLocalTranslation(collision);
+        
+                Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+                material.setColor("Color", ColorRGBA.Red);
+                
+                geometry.setMaterial(material);
+                rootNode.attachChild(geometry);
+                
+                //bulletAppState.getPhysicsSpace().add(ball);
             }
         }
         

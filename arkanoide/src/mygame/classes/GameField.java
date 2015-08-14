@@ -79,6 +79,70 @@ public class GameField extends Node{
         this.attachChild(gTopBorder);
         
     }
+
+    public Floor getFloor() {
+        return floor;
+    }
+
+    public void setFloor(Floor floor) {
+        this.floor = floor;
+    }
+
+    public Box getTopBorder() {
+        return topBorder;
+    }
+
+    public void setTopBorder(Box topBorder) {
+        this.topBorder = topBorder;
+    }
+
+    public Box getLeftBorder() {
+        return leftBorder;
+    }
+
+    public void setLeftBorder(Box leftBorder) {
+        this.leftBorder = leftBorder;
+    }
+
+    public Box getRightBorder() {
+        return rightBorder;
+    }
+
+    public void setRightBorder(Box rightBorder) {
+        this.rightBorder = rightBorder;
+    }
+
+    public Geometry getgRightBorder() {
+        return gRightBorder;
+    }
+
+    public void setgRightBorder(Geometry gRightBorder) {
+        this.gRightBorder = gRightBorder;
+    }
+
+    public Geometry getgLeftBorder() {
+        return gLeftBorder;
+    }
+
+    public void setgLeftBorder(Geometry gLeftBorder) {
+        this.gLeftBorder = gLeftBorder;
+    }
+
+    public Geometry getgTopBorder() {
+        return gTopBorder;
+    }
+
+    public void setgTopBorder(Geometry gTopBorder) {
+        this.gTopBorder = gTopBorder;
+    }
+
+    public Texture getBoxTexture() {
+        return boxTexture;
+    }
+
+    public void setBoxTexture(Texture boxTexture) {
+        this.boxTexture = boxTexture;
+    }
     
     
 }
