@@ -23,7 +23,9 @@ public class Arkanoide {
     private float scale = new Float(0.2f);
     private Spatial spatial;
     private String model = "Models/Arkanoide/Arkanoide.mesh.xml";
-
+    
+    private boolean ballReleased = false;
+    
     public Arkanoide() {
     }
 
@@ -58,24 +60,26 @@ public class Arkanoide {
         this.spatial = spatial;
     }
 
+    
+    
     public Vector3f shootBall(Ball ball, Node nodeArkanoide) {
-        ball.setDirection(new Vector3f(ball.getLocalTranslation().getX() + 1, ball.getLocalTranslation().getY(), ball.getLocalTranslation().getZ() + (-5.65f)));
-
-        Ray ray = new Ray(ball.getGeometry().getWorldTranslation(), ball.getDirection());
+        ball.setDirection(new Vector3f(ball.getLocalTranslation().getX() + 1, ball.getLocalTranslation().getY(), ball.getLocalTranslation().getZ() + (-5.65f)).normalize());
+        
+        //System.out.println(new Vector3f(ball.getLocalTranslation().getX() + 1, ball.getLocalTranslation().getY(), ball.getLocalTranslation().getZ() + (-5.65f)));
+        //System.out.println(ball.getLocalTranslation());
+        
+        Ray ray = new Ray(ball.getWorldTranslation(), ball.getDirection());
         CollisionResults collisions = new CollisionResults();
         
-        List<Spatial> targets = nodeArkanoide.getParent().getChildren(); 
-        
-        for(Spatial target : targets){
-            target.collideWith(ray, collisions);
-        }
-        
+        nodeArkanoide.getParent().collideWith(ray, collisions);
+
         if(collisions.size() > 0){
             for(int i = 0; i < collisions.size(); i++){
                 System.out.println(collisions.getCollision(i).getGeometry().getName() + " - ");
                 
                 if(!collisions.getCollision(i).getGeometry().getName().equals("ballMesh")){
-                    System.out.println(collisions.getCollision(i).getGeometry().getName());
+                    //System.out.println(collisions.getCollision(i).getGeometry().getName());
+                    this.setBallReleased(Boolean.TRUE);
                     return collisions.getCollision(i).getContactPoint();
                 }
                 
@@ -83,7 +87,15 @@ public class Arkanoide {
          
         }
        
-        System.out.println("llega");
+        //System.out.println("llega");
         return new Vector3f(0.0f,0.0f,0.0f);
+    }
+
+    public boolean isBallReleased() {
+        return ballReleased;
+    }
+
+    public void setBallReleased(boolean ballReleased) {
+        this.ballReleased = ballReleased;
     }
 }

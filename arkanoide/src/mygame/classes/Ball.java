@@ -18,10 +18,10 @@ import com.jme3.scene.shape.Sphere;
  *
  * @author nicolas
  */
-public class Ball extends Node{
+public class Ball{
     
     private static final Vector3f INITIAL_POSITION = new Vector3f(0.0f, -2.3f, 1f); 
-    private static final float BALL_SCALE = 0.07f;
+    private static final float BALL_SCALE = 0.07f; //Radius
     private static String TEXTURE = "Textures/metal_texture_sphere.jpg";
     
     private Geometry geometry;
@@ -34,7 +34,11 @@ public class Ball extends Node{
         //sphere.setTextureMode(Sphere.TextureMode.Projected);
         
         geometry = new Geometry("ballMesh", sphere);
+        
+        
+        //this.setLocalTranslation(INITIAL_POSITION);
         geometry.setLocalTranslation(INITIAL_POSITION);
+        
         
         material = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
         //material.setTexture("DiffuseMap", assetManager.loadTexture(TEXTURE));
@@ -45,10 +49,10 @@ public class Ball extends Node{
         
         geometry.setMaterial(material);
         
-        geometry.setModelBound(new BoundingSphere());
-        geometry.updateModelBound();
+//        geometry.setModelBound(new BoundingSphere());
+//        geometry.updateModelBound();
         
-        this.attachChild(geometry);
+        //this.attachChild(geometry);
         
     }
 

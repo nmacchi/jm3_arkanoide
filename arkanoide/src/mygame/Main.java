@@ -35,25 +35,16 @@ import mygame.classes.keyMappings.KeyMappings;
 public class Main extends SimpleApplication {
 
     //3D objects
-    private Arkanoide arkanoide;
     private Ball ball;
+    private Arkanoide arkanoide;
     private List<Brick> brickList;
     private GameField gameField;
-   
-    CollisionResults collisionResults = new CollisionResults();
-    
-    
+    private Geometry mark;
     //Nodes 
-    Node pivot = new Node("pivot");
     Node nodeArkanoide = new Node("arkanoide");
-    //Node nodeBall = new Node("ball");
     Node nodeBrick = new Node("brick");
-    
-    //Physics app state
-    private BulletAppState bulletAppState;
-    
-    //private static float brickPositionY = -2.3f;
-    //private static float brickScaleY = 0.15f;
+    Vector3f intersection = new Vector3f();
+
     public static void main(String[] args) {
         Main app = new Main();
         app.start();
@@ -61,32 +52,22 @@ public class Main extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
-        //init physics
-//        bulletAppState = new BulletAppState();
-//        stateManager.attach(bulletAppState);
-        
         initKeys();
         setCamPosition();
         setSceneLights();
+        initMark();
 
-        
-        ball = new Ball(assetManager); 
-        //pivot.attachChild(ball.getGeometry());
-        rootNode.attachChild(ball);
-        
+        ball = new Ball(assetManager);
+        rootNode.attachChild(ball.getGeometry());
+
         arkanoide = new Arkanoide(assetManager);
         nodeArkanoide.attachChild(arkanoide.getSpatial());
-        nodeArkanoide.attachChild(ball);
-        
+
         rootNode.attachChild(nodeArkanoide);
-        //nodeArkanoide.attachChild(arkanoide.getSpatial());        
-        //pivot.attachChild(nodeArkanoide);
-        
-        //rootNode.attachChild(pivot);
-        
+
         gameField = new GameField(assetManager);
         rootNode.attachChild(gameField);
-        
+
         float initPositionX = -1.84f;
         float nextPositionZ = -2.8f;
         //SUMO 0.36
@@ -118,23 +99,32 @@ public class Main extends SimpleApplication {
             }
 
         }
-        
+
         rootNode.attachChild(nodeBrick);
 
     }
 
     @Override
     public void simpleUpdate(float tpf) {
+
+        
+        
+        
+        
+        if(arkanoide.isBallReleased()){
+            //if(ball.getGeometry().getWorldTranslation() != intersection){
+               System.out.println(ball.getDirection());
+               ball.move(ball.getDirection().mult(0.001f));
+            //}
+        }
+        
         //TODO: add update code
         //ball.move(new Vector3f(ball.getLocalTranslation().getX() + 1, ball.getLocalTranslation().getY(), ball.getLocalTranslation().getZ() + (-3f)).mult(0.01f));
-        
         //ball.getChild("ballMesh").collideWith(((Geometry)ball.getChild("ballMesh")).getModelBound(), collisionResults);
         //System.out.println(ball.getLocalTranslation());
         //if(collisionResults.size() > 0){
         //    System.out.println(collisionResults.getClosestCollision().getGeometry().getName());
         //}
-        
-        
     }
 
     @Override
@@ -147,20 +137,30 @@ public class Main extends SimpleApplication {
         cam.setLocation(new Vector3f(0, 4f, 4f));
         cam.lookAt(new Vector3f(0.0f, -2.3f, -2f), new Vector3f(0, 0, 0));
     }
-    
+
+    private void initMark() {
+        Sphere sphere = new Sphere(32, 32, 0.05f, true, false);
+        mark = new Geometry("mark", sphere);
+
+        Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        material.setColor("Color", ColorRGBA.Red);
+
+        mark.setMaterial(material);
+    }
+
     /**
      * Lights
      */
-    private void setSceneLights(){
+    private void setSceneLights() {
         DirectionalLight sun = new DirectionalLight();
         sun.setDirection(new Vector3f(-0.1f, -2f, -10.0f).normalizeLocal());
         rootNode.addLight(sun);
-        
+
         AmbientLight al = new AmbientLight();
         al.setColor(ColorRGBA.White.mult(1.3f));
         rootNode.addLight(al);
     }
-    
+
     /**
      * Register keys
      */
@@ -172,45 +172,40 @@ public class Main extends SimpleApplication {
         inputManager.addListener(analogListener, KeyMappings.MAPPING_LEFT, KeyMappings.MAPPING_RIGHT);
         inputManager.addListener(actionListener, KeyMappings.MAPPING_SHOOT);
     }
-    
     /**
      * Listeners
      */
     private AnalogListener analogListener = new AnalogListener() {
         public void onAnalog(String name, float value, float tpf) {
             //Vector3f v = arkanoide.getSpatial().getLocalTranslation();
-            Vector3f v = nodeArkanoide.getLocalTranslation();
+            //Vector3f v = nodeArkanoide.getLocalTranslation();
+
             if (name.equals(KeyMappings.MAPPING_LEFT)) {
-                nodeArkanoide.setLocalTranslation(v.x - value*speed, v.y, v.z);
+                nodeArkanoide.setLocalTranslation(nodeArkanoide.getLocalTranslation().getX() - value * speed, nodeArkanoide.getLocalTranslation().getY(), nodeArkanoide.getLocalTranslation().getZ());
+                
+                if(!arkanoide.isBallReleased())
+                    ball.setLocalTranslation(ball.getLocalTranslation().getX() - value * speed, ball.getLocalTranslation().getY(), ball.getLocalTranslation().getZ());
             }
             if (name.equals(KeyMappings.MAPPING_RIGHT)) {
-                nodeArkanoide.setLocalTranslation(v.x + value*speed, v.y, v.z);
+                nodeArkanoide.setLocalTranslation(nodeArkanoide.getLocalTranslation().getX() + value * speed, nodeArkanoide.getLocalTranslation().getY(), nodeArkanoide.getLocalTranslation().getZ());
+                
+                if(!arkanoide.isBallReleased())
+                    ball.setLocalTranslation(ball.getLocalTranslation().getX() + value * speed, ball.getLocalTranslation().getY(), ball.getLocalTranslation().getZ());
             }
         }
     };
-    
-    private ActionListener actionListener = new ActionListener(){
-
+    private ActionListener actionListener = new ActionListener() {
         public void onAction(String name, boolean isPressed, float tpf) {
-            if(name.equals(KeyMappings.MAPPING_SHOOT) && !isPressed){
-               
-                Vector3f collision = arkanoide.shootBall(ball, nodeArkanoide);
-                
-                
-                Sphere intersection = new Sphere(32,32,0.05f,true,false);
-                Geometry geometry = new Geometry("intersection", intersection);
-                geometry.setLocalTranslation(collision);
-        
-                Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-                material.setColor("Color", ColorRGBA.Red);
-                
-                geometry.setMaterial(material);
-                rootNode.attachChild(geometry);
-                
+            if (name.equals(KeyMappings.MAPPING_SHOOT) && !isPressed) {
+
+                Vector3f intersection = arkanoide.shootBall(ball, nodeArkanoide);
+                //System.out.println(intersection);
+
+                mark.setLocalTranslation(intersection);
+                rootNode.attachChild(mark);
+
                 //bulletAppState.getPhysicsSpace().add(ball);
             }
         }
-        
     };
-            
 }
