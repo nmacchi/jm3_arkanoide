@@ -1,8 +1,6 @@
 package mygame;
 
 import com.jme3.app.SimpleApplication;
-import com.jme3.bullet.BulletAppState;
-import com.jme3.collision.CollisionResults;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
@@ -40,6 +38,7 @@ public class Main extends SimpleApplication {
     private List<Brick> brickList;
     private GameField gameField;
     private Geometry mark;
+    
     //Nodes 
     Node nodeArkanoide = new Node("arkanoide");
     Node nodeBrick = new Node("brick");
@@ -47,6 +46,7 @@ public class Main extends SimpleApplication {
 
     public static void main(String[] args) {
         Main app = new Main();
+        
         app.start();
     }
 
@@ -58,7 +58,7 @@ public class Main extends SimpleApplication {
         initMark();
 
         ball = new Ball(assetManager);
-        rootNode.attachChild(ball.getGeometry());
+        rootNode.attachChild(ball);
 
         arkanoide = new Arkanoide(assetManager);
         nodeArkanoide.attachChild(arkanoide.getSpatial());

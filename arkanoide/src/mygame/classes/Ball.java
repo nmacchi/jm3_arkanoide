@@ -18,50 +18,33 @@ import com.jme3.scene.shape.Sphere;
  *
  * @author nicolas
  */
-public class Ball{
+public class Ball extends Geometry{
     
     private static final Vector3f INITIAL_POSITION = new Vector3f(0.0f, -2.3f, 1f); 
     private static final float BALL_SCALE = 0.07f; //Radius
     private static String TEXTURE = "Textures/metal_texture_sphere.jpg";
     
     private Geometry geometry;
-    private Material material;
+    //private Material material;
     private Vector3f direction;
     
     public Ball(AssetManager assetManager){
-       
-        Sphere sphere = new Sphere(32,32,BALL_SCALE,true,false);
+        super("ballMesh", new Sphere(32,32,BALL_SCALE,true,false));
+        
         //sphere.setTextureMode(Sphere.TextureMode.Projected);
-        
-        geometry = new Geometry("ballMesh", sphere);
-        
-        
-        //this.setLocalTranslation(INITIAL_POSITION);
-        geometry.setLocalTranslation(INITIAL_POSITION);
+
+        this.setLocalTranslation(INITIAL_POSITION);
         
         
-        material = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-        //material.setTexture("DiffuseMap", assetManager.loadTexture(TEXTURE));
-        //material.setBoolean("UseMaterialColors",true);
-        material.setColor("Diffuse", ColorRGBA.White);
-        //material.setColor("Specular", ColorRGBA.White);
-        //material.setFloat("Shininess", 64f);
         
-        geometry.setMaterial(material);
+        
+        this.setMaterial(material);
         
 //        geometry.setModelBound(new BoundingSphere());
 //        geometry.updateModelBound();
-        
+      
         //this.attachChild(geometry);
         
-    }
-
-    public Material getMaterial() {
-        return material;
-    }
-
-    public void setMaterial(Material material) {
-        this.material = material;
     }
 
     public Geometry getGeometry() {
@@ -80,5 +63,14 @@ public class Ball{
         this.direction = direction;
     }
    
-    
+    private Material buildMaterial(AssetManager assetManager){
+        material = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
+        //material.setTexture("DiffuseMap", assetManager.loadTexture(TEXTURE));
+        //material.setBoolean("UseMaterialColors",true);
+        material.setColor("Diffuse", ColorRGBA.White);
+        //material.setColor("Specular", ColorRGBA.White);
+        //material.setFloat("Shininess", 64f);
+        
+        return material;
+    }
 }
