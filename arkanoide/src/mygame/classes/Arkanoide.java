@@ -63,32 +63,32 @@ public class Arkanoide {
     
     
     public Vector3f shootBall(Ball ball, Node nodeArkanoide) {
-        ball.setDirection(new Vector3f(ball.getLocalTranslation().getX() + 1, ball.getLocalTranslation().getY(), ball.getLocalTranslation().getZ() + (-5.65f)).normalize());
+        ball.setDirection(new Vector3f(ball.getWorldTranslation().getX() + 1, 0.0f , ball.getWorldTranslation().getZ() - 5.65f));
         
         //System.out.println(new Vector3f(ball.getLocalTranslation().getX() + 1, ball.getLocalTranslation().getY(), ball.getLocalTranslation().getZ() + (-5.65f)));
         //System.out.println(ball.getLocalTranslation());
         
-        Ray ray = new Ray(ball.getWorldTranslation(), ball.getDirection());
-        CollisionResults collisions = new CollisionResults();
-        
-        nodeArkanoide.getParent().collideWith(ray, collisions);
-
-        if(collisions.size() > 0){
-            for(int i = 0; i < collisions.size(); i++){
-                System.out.println(collisions.getCollision(i).getGeometry().getName() + " - ");
-                
-                if(!collisions.getCollision(i).getGeometry().getName().equals("ballMesh")){
-                    //System.out.println(collisions.getCollision(i).getGeometry().getName());
+//        Ray ray = new Ray(ball.getLocalTranslation(), ball.getDirection());
+//        CollisionResults collisions = new CollisionResults();
+//        
+//        nodeArkanoide.getParent().collideWith(ray, collisions);
+//
+//        if(collisions.size() > 0){
+//            for(int i = 0; i < collisions.size(); i++){
+//                System.out.println(collisions.getCollision(i).getGeometry().getName() + " - ");
+//                
+//                if(!collisions.getCollision(i).getGeometry().getName().equals("ballMesh")){
+//                    //System.out.println(collisions.getCollision(i).getGeometry().getName());
                     this.setBallReleased(Boolean.TRUE);
-                    return collisions.getCollision(i).getContactPoint();
-                }
-                
-            }
-         
-        }
-       
-        //System.out.println("llega");
-        return new Vector3f(0.0f,0.0f,0.0f);
+//                    return collisions.getCollision(i).getContactPoint();
+//                }
+//                
+//            }
+//         
+//        }
+          return ball.getDirection();
+//        System.out.println("llega");
+//        return new Vector3f(0.0f,0.0f,0.0f);
     }
 
     public boolean isBallReleased() {

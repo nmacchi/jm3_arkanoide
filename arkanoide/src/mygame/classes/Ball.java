@@ -25,20 +25,16 @@ public class Ball extends Geometry{
     private static String TEXTURE = "Textures/metal_texture_sphere.jpg";
     
     private Geometry geometry;
-    //private Material material;
     private Vector3f direction;
     
     public Ball(AssetManager assetManager){
-        super("ballMesh", new Sphere(32,32,BALL_SCALE,true,false));
+        super("ballMesh", new Sphere(16,16,BALL_SCALE,true,false));
         
         //sphere.setTextureMode(Sphere.TextureMode.Projected);
 
         this.setLocalTranslation(INITIAL_POSITION);
         
-        
-        
-        
-        this.setMaterial(material);
+        this.setMaterial(createMaterial(assetManager));
         
 //        geometry.setModelBound(new BoundingSphere());
 //        geometry.updateModelBound();
@@ -63,14 +59,14 @@ public class Ball extends Geometry{
         this.direction = direction;
     }
    
-    private Material buildMaterial(AssetManager assetManager){
+    private Material createMaterial(AssetManager assetManager){
         material = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
         //material.setTexture("DiffuseMap", assetManager.loadTexture(TEXTURE));
         //material.setBoolean("UseMaterialColors",true);
         material.setColor("Diffuse", ColorRGBA.White);
         //material.setColor("Specular", ColorRGBA.White);
         //material.setFloat("Shininess", 64f);
-        
+       
         return material;
     }
 }

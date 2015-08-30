@@ -1,6 +1,7 @@
 package mygame;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.collision.CollisionResults;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
@@ -14,6 +15,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Sphere;
 
@@ -38,6 +40,9 @@ public class Main extends SimpleApplication {
     private List<Brick> brickList;
     private GameField gameField;
     private Geometry mark;
+    
+    
+    CollisionResults collisions = new CollisionResults();
     
     //Nodes 
     Node nodeArkanoide = new Node("arkanoide");
@@ -113,9 +118,16 @@ public class Main extends SimpleApplication {
         
         if(arkanoide.isBallReleased()){
             //if(ball.getGeometry().getWorldTranslation() != intersection){
-               System.out.println(ball.getDirection());
+               //System.out.println(ball.getDirection());
                ball.move(ball.getDirection().mult(0.001f));
             //}
+            //for(Spatial brick : nodeBrick.getChildren()){
+                if((ball.collideWith(((Geometry)((Node)rootNode.getChild("nodeBrick")).getChildren()).getWorldBound(), collisions)) > 0){
+                System.out.println("Colisiona con: " + collisions.getClosestCollision().getGeometry().getName());
+            //}
+            }   
+            
+            
         }
         
         //TODO: add update code
@@ -139,7 +151,7 @@ public class Main extends SimpleApplication {
     }
 
     private void initMark() {
-        Sphere sphere = new Sphere(32, 32, 0.05f, true, false);
+        Sphere sphere = new Sphere(16, 16, 0.05f);
         mark = new Geometry("mark", sphere);
 
         Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
