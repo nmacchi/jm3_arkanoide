@@ -1,6 +1,7 @@
 package mygame;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.bounding.BoundingBox;
 import com.jme3.collision.CollisionResults;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
@@ -11,11 +12,11 @@ import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Sphere;
 
@@ -40,10 +41,8 @@ public class Main extends SimpleApplication {
     private List<Brick> brickList;
     private GameField gameField;
     private Geometry mark;
-    
-    
+    private Ray ray = new Ray();
     CollisionResults collisions = new CollisionResults();
-    
     //Nodes 
     Node nodeArkanoide = new Node("arkanoide");
     Node nodeBrick = new Node("brick");
@@ -51,7 +50,7 @@ public class Main extends SimpleApplication {
 
     public static void main(String[] args) {
         Main app = new Main();
-        
+
         app.start();
     }
 
@@ -112,24 +111,33 @@ public class Main extends SimpleApplication {
     @Override
     public void simpleUpdate(float tpf) {
 
-        
-        
-        
-        
-        if(arkanoide.isBallReleased()){
+
+
+
+
+        if (arkanoide.isBallReleased()) {
             //if(ball.getGeometry().getWorldTranslation() != intersection){
-               //System.out.println(ball.getDirection());
-               ball.move(ball.getDirection().mult(0.001f));
+            //System.out.println(ball.getDirection());
+            ball.move(ball.getDirection().mult(0.010f));
             //}
+            
+           //System.out.println(ball.getGeometryNameToCollision(rootNode));
+           if(ball.collideWith(rootNode.getChild(ball.getGeometryNameToCollision(rootNode)).getWorldBound(), collisions) > 0){
+                //System.out.println("PUM");
+                arkanoide.setBallReleased(Boolean.FALSE);
+           }
+            
+           
+
             //for(Spatial brick : nodeBrick.getChildren()){
-                if((ball.collideWith(((Geometry)((Node)rootNode.getChild("nodeBrick")).getChildren()).getWorldBound(), collisions)) > 0){
-                System.out.println("Colisiona con: " + collisions.getClosestCollision().getGeometry().getName());
-            //}
-            }   
-            
-            
+//            if ((ball.collideWith(((Geometry) ((Node) rootNode.getChild("nodeBrick")).getChildren()).getWorldBound(), collisions)) > 0) {
+//                System.out.println("Colisiona con: " + collisions.getClosestCollision().getGeometry().getName());
+//                //}
+//            }
+
+
         }
-        
+
         //TODO: add update code
         //ball.move(new Vector3f(ball.getLocalTranslation().getX() + 1, ball.getLocalTranslation().getY(), ball.getLocalTranslation().getZ() + (-3f)).mult(0.01f));
         //ball.getChild("ballMesh").collideWith(((Geometry)ball.getChild("ballMesh")).getModelBound(), collisionResults);
@@ -194,27 +202,33 @@ public class Main extends SimpleApplication {
 
             if (name.equals(KeyMappings.MAPPING_LEFT)) {
                 nodeArkanoide.setLocalTranslation(nodeArkanoide.getLocalTranslation().getX() - value * speed, nodeArkanoide.getLocalTranslation().getY(), nodeArkanoide.getLocalTranslation().getZ());
-                
-                if(!arkanoide.isBallReleased())
+
+                if (!arkanoide.isBallReleased()) {
                     ball.setLocalTranslation(ball.getLocalTranslation().getX() - value * speed, ball.getLocalTranslation().getY(), ball.getLocalTranslation().getZ());
+                }
             }
             if (name.equals(KeyMappings.MAPPING_RIGHT)) {
                 nodeArkanoide.setLocalTranslation(nodeArkanoide.getLocalTranslation().getX() + value * speed, nodeArkanoide.getLocalTranslation().getY(), nodeArkanoide.getLocalTranslation().getZ());
-                
-                if(!arkanoide.isBallReleased())
+
+                if (!arkanoide.isBallReleased()) {
                     ball.setLocalTranslation(ball.getLocalTranslation().getX() + value * speed, ball.getLocalTranslation().getY(), ball.getLocalTranslation().getZ());
+                }
             }
         }
     };
     private ActionListener actionListener = new ActionListener() {
         public void onAction(String name, boolean isPressed, float tpf) {
             if (name.equals(KeyMappings.MAPPING_SHOOT) && !isPressed) {
-
-                Vector3f intersection = arkanoide.shootBall(ball, nodeArkanoide);
+                
+//                Vector3f extent = ((BoundingBox) gameField.getChild("Floor").getWorldBound()).getExtent(new Vector3f());
+//                
+//                System.out.println("Alto: " + extent.z);
+                
+                arkanoide.shootBall(ball, nodeArkanoide);
                 //System.out.println(intersection);
 
-                mark.setLocalTranslation(intersection);
-                rootNode.attachChild(mark);
+                //mark.setLocalTranslation(intersection);
+                //rootNode.attachChild(mark);
 
                 //bulletAppState.getPhysicsSpace().add(ball);
             }

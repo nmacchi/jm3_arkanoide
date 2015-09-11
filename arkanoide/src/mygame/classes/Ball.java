@@ -7,8 +7,10 @@ package mygame.classes;
 import com.jme3.asset.AssetManager;
 import com.jme3.bounding.BoundingSphere;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.collision.CollisionResults;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -26,6 +28,8 @@ public class Ball extends Geometry{
     
     private Geometry geometry;
     private Vector3f direction;
+    
+    private String collideWith;
     
     public Ball(AssetManager assetManager){
         super("ballMesh", new Sphere(16,16,BALL_SCALE,true,false));
@@ -68,5 +72,30 @@ public class Ball extends Geometry{
         //material.setFloat("Shininess", 64f);
        
         return material;
+    }
+    
+    public String getGeometryNameToCollision(Node rootNode){
+         //Ray ray = new Ray(ball.getLocalTranslation(), new Vector3f(ball.getLocalTranslation().getX() + 1, ball.getLocalTranslation().getY() , ball.getLocalTranslation().getZ() - 5.65f));
+        Ray ray = new Ray(this.getLocalTranslation(),new Vector3f(this.getDirection().x , 0.0f , this.getDirection().z));
+        CollisionResults collisions = new CollisionResults();
+//        
+        rootNode.collideWith(ray, collisions);
+//
+        if(collisions.size() > 0){
+            for(int i = 0; i < collisions.size(); i++){
+                //System.out.println(collisions.getCollision(i).getGeometry().getName() + " - ");
+//                
+                if(!collisions.getCollision(i).getGeometry().getName().equals("ballMesh")){
+                    collideWith = collisions.getCollision(i).getGeometry().getName();
+                    break;
+                    //this.setBallReleased(Boolean.TRUE);
+                    //return collisions.getCollision(i).getContactPoint();
+                }
+//                
+            }
+//         
+        }
+        
+        return collideWith;
     }
 }

@@ -5,13 +5,11 @@
 package mygame.classes;
 
 import com.jme3.asset.AssetManager;
-import com.jme3.collision.CollisionResults;
+import com.jme3.bounding.BoundingBox;
 import com.jme3.math.FastMath;
-import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import java.util.List;
 
 /**
  *
@@ -62,35 +60,24 @@ public class Arkanoide {
 
     
     
-    public Vector3f shootBall(Ball ball, Node nodeArkanoide) {
-        ball.setDirection(new Vector3f(ball.getWorldTranslation().getX() + 1, 0.0f , ball.getWorldTranslation().getZ() - 5.65f));
+    public void shootBall(Ball ball, Node nodeArkanoide) {
+//        Vector3f extent = ((BoundingBox) spatial.getWorldBound()).getExtent(new Vector3f());
+//        
+//        System.out.println("Ancho: " + extent.x);
+        
+        ball.setDirection(new Vector3f(ball.getLocalTranslation().getX() + 1, 0.0f , ball.getLocalTranslation().getZ() - 5.65f));
         
         //System.out.println(new Vector3f(ball.getLocalTranslation().getX() + 1, ball.getLocalTranslation().getY(), ball.getLocalTranslation().getZ() + (-5.65f)));
         //System.out.println(ball.getLocalTranslation());
-        
-//        Ray ray = new Ray(ball.getLocalTranslation(), ball.getDirection());
-//        CollisionResults collisions = new CollisionResults();
-//        
-//        nodeArkanoide.getParent().collideWith(ray, collisions);
-//
-//        if(collisions.size() > 0){
-//            for(int i = 0; i < collisions.size(); i++){
-//                System.out.println(collisions.getCollision(i).getGeometry().getName() + " - ");
-//                
-//                if(!collisions.getCollision(i).getGeometry().getName().equals("ballMesh")){
-//                    //System.out.println(collisions.getCollision(i).getGeometry().getName());
-                    this.setBallReleased(Boolean.TRUE);
-//                    return collisions.getCollision(i).getContactPoint();
-//                }
-//                
-//            }
-//         
-//        }
-          return ball.getDirection();
+        this.setBallReleased(Boolean.TRUE);
+       
+//          return ball.getDirection();
 //        System.out.println("llega");
 //        return new Vector3f(0.0f,0.0f,0.0f);
     }
-
+    
+    
+    
     public boolean isBallReleased() {
         return ballReleased;
     }
