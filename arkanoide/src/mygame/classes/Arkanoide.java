@@ -5,8 +5,8 @@
 package mygame.classes;
 
 import com.jme3.asset.AssetManager;
-import com.jme3.bounding.BoundingBox;
 import com.jme3.math.FastMath;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -61,19 +61,14 @@ public class Arkanoide {
     
     
     public void shootBall(Ball ball, Node nodeArkanoide) {
-//        Vector3f extent = ((BoundingBox) spatial.getWorldBound()).getExtent(new Vector3f());
-//        
-//        System.out.println("Ancho: " + extent.x);
+        Vector3f direction = new Vector3f(Vector3f.UNIT_Z).negate();
         
-        ball.setDirection(new Vector3f(ball.getLocalTranslation().getX() + 1, 0.0f , ball.getLocalTranslation().getZ() - 5.65f));
+        Quaternion q = new Quaternion();
+        q.fromAngleAxis(-FastMath.QUARTER_PI, Vector3f.UNIT_Y);
+        q.mult(direction, direction);
         
-        //System.out.println(new Vector3f(ball.getLocalTranslation().getX() + 1, ball.getLocalTranslation().getY(), ball.getLocalTranslation().getZ() + (-5.65f)));
-        //System.out.println(ball.getLocalTranslation());
+        ball.setDirection(direction);
         this.setBallReleased(Boolean.TRUE);
-       
-//          return ball.getDirection();
-//        System.out.println("llega");
-//        return new Vector3f(0.0f,0.0f,0.0f);
     }
     
     
