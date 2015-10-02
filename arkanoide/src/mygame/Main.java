@@ -1,7 +1,6 @@
 package mygame;
 
 import com.jme3.app.SimpleApplication;
-import com.jme3.bounding.BoundingBox;
 import com.jme3.collision.CollisionResults;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
@@ -12,6 +11,8 @@ import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.FastMath;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
@@ -118,37 +119,36 @@ public class Main extends SimpleApplication {
         if (arkanoide.isBallReleased()) {
             //if(ball.getGeometry().getWorldTranslation() != intersection){
             //System.out.println(ball.getDirection());
-            ball.move(ball.getDirection().mult(0.010f));
+            ball.move(ball.getDirection().mult(0.005f));
             //}
-            
-           //System.out.println(ball.getGeometryNameToCollision(rootNode));
-           if(ball.collideWith(rootNode.getChild(ball.getGeometryNameToCollision(rootNode)).getWorldBound(), collisions) > 0){
-                //System.out.println("PUM");
-                arkanoide.setBallReleased(Boolean.FALSE);
-           }
-            
-           
 
-            //for(Spatial brick : nodeBrick.getChildren()){
-//            if ((ball.collideWith(((Geometry) ((Node) rootNode.getChild("nodeBrick")).getChildren()).getWorldBound(), collisions)) > 0) {
-//                System.out.println("Colisiona con: " + collisions.getClosestCollision().getGeometry().getName());
-//                //}
-//            }
+            //System.out.println(ball.getGeometryNameToCollision(rootNode));
+
+            if (ball.hasCollision(rootNode)) {
+                Vector3f normal = ball.getCollisionContactNormal();
+                Vector3f direction = ball.getDirection().negate();
+                Vector3f axis = direction.cross(normal);
+//               
+                float cosAlpha = direction.dot(axis);
+                float alpha = FastMath.acos(cosAlpha);
+//               
+                Quaternion q = new Quaternion().fromAngleAxis(alpha, axis);
+                Vector3f reflection = q.multLocal(normal);
+                reflection.setY(0.0f);
+                
+                
+                ball.setDirection(reflection);
+
+            }
 
 
         }
 
-        //TODO: add update code
-        //ball.move(new Vector3f(ball.getLocalTranslation().getX() + 1, ball.getLocalTranslation().getY(), ball.getLocalTranslation().getZ() + (-3f)).mult(0.01f));
-        //ball.getChild("ballMesh").collideWith(((Geometry)ball.getChild("ballMesh")).getModelBound(), collisionResults);
-        //System.out.println(ball.getLocalTranslation());
-        //if(collisionResults.size() > 0){
-        //    System.out.println(collisionResults.getClosestCollision().getGeometry().getName());
-        //}
     }
 
+
     @Override
-    public void simpleRender(RenderManager rm) {
+        public void simpleRender(RenderManager rm) {
         //TODO: add render code
     }
 

@@ -31,6 +31,10 @@ public class Ball extends Geometry{
     
     private String collideWith;
     
+    private Ray ray = new Ray();
+    private CollisionResults collisions = new CollisionResults();
+    private Vector3f collisionContactNormal;
+    
     public Ball(AssetManager assetManager){
         super("ballMesh", new Sphere(16,16,BALL_SCALE,true,false));
         
@@ -74,10 +78,13 @@ public class Ball extends Geometry{
         return material;
     }
     
-    public String getGeometryNameToCollision(Node rootNode){
+    public Boolean hasCollision(Node rootNode){
          //Ray ray = new Ray(ball.getLocalTranslation(), new Vector3f(ball.getLocalTranslation().getX() + 1, ball.getLocalTranslation().getY() , ball.getLocalTranslation().getZ() - 5.65f));
-        Ray ray = new Ray(this.getLocalTranslation(),new Vector3f(this.getDirection().x , 0.0f , this.getDirection().z));
-        CollisionResults collisions = new CollisionResults();
+        //Ray ray = new Ray(this.getLocalTranslation(),new Vector3f(this.getDirection().x , 0.0f , this.getDirection().z));
+        ray.setOrigin(this.getLocalTranslation());
+        ray.setDirection(new Vector3f(this.getDirection().x , 0.0f , this.getDirection().z));
+        
+        
 //        
         rootNode.collideWith(ray, collisions);
 //
@@ -85,17 +92,28 @@ public class Ball extends Geometry{
             for(int i = 0; i < collisions.size(); i++){
                 //System.out.println(collisions.getCollision(i).getGeometry().getName() + " - ");
 //                
-                if(!collisions.getCollision(i).getGeometry().getName().equals("ballMesh")){
-                    collideWith = collisions.getCollision(i).getGeometry().getName();
-                    break;
+                if(!collisions.getCollision(i).getGeometry().getName().equals("ballMesh")){      
+                    if(this.collideWith(rootNode.getChild(collisions.getCollision(i).getGeometry().getName()).getWorldBound(), collisions) > 0){
+                        collisionContactNormal = collisions.getCollision(i).getContactNormal();
+                        return true;
+                    }   
                     //this.setBallReleased(Boolean.TRUE);
                     //return collisions.getCollision(i).getContactPoint();
-                }
-//                
+                }           
             }
-//         
         }
         
-        return collideWith;
+        return false;
     }
+
+    public Vector3f getCollisionContactNormal() {
+        return collisionContactNormal;
+    }
+
+    public void setCollisionContactNormal(Vector3f collisionContactNormal) {
+        this.collisionContactNormal = collisionContactNormal;
+    }
+
+    
+    
 }
