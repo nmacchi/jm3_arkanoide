@@ -19,6 +19,7 @@ import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
+import com.jme3.scene.shape.Line;
 import com.jme3.scene.shape.Sphere;
 
 import java.util.Arrays;
@@ -28,6 +29,7 @@ import mygame.classes.Ball;
 import mygame.classes.Brick;
 import mygame.classes.GameField;
 import mygame.classes.keyMappings.KeyMappings;
+import sun.awt.image.PixelConverter;
 
 /**
  * test
@@ -119,7 +121,7 @@ public class Main extends SimpleApplication {
         if (arkanoide.isBallReleased()) {
             //if(ball.getGeometry().getWorldTranslation() != intersection){
             //System.out.println(ball.getDirection());
-            ball.move(ball.getDirection().mult(0.005f));
+            ball.move(ball.getDirection().mult(ball.getSpeed()));
             //}
 
             //System.out.println(ball.getGeometryNameToCollision(rootNode));
@@ -127,14 +129,42 @@ public class Main extends SimpleApplication {
             if (ball.hasCollision(rootNode)) {
                 Vector3f normal = ball.getCollisionContactNormal();
                 Vector3f direction = ball.getDirection().negate();
-                Vector3f axis = direction.cross(normal);
-//               
+                Vector3f axis = direction.cross(normal).normalizeLocal();
+//              
+                
+                //DEBUG
+//                Line l1 = new Line(ball.getContactPoint(), normal);
+//                Line l2 = new Line(ball.getContactPoint(), direction);
+//                Line l3 = new Line(ball.getContactPoint(), axis);
+//                
+//                
+//                
+//                Geometry g1 = new Geometry("normal", l1);
+//                Material m1 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+//                m1.setColor("Color", ColorRGBA.White);
+//                g1.setMaterial(m1);
+//                rootNode.attachChild(g1);
+                
+//                Geometry g2 = new Geometry("direction", l2);
+//                Material m2 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+//                m2.setColor("Color", ColorRGBA.Red);
+//                g2.setMaterial(m2);
+//                rootNode.attachChild(g2);
+                
+//                Geometry g3 = new Geometry("axis", l3);
+//                Material m3 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+//                m3.setColor("Color", ColorRGBA.Green);
+//                g3.setMaterial(m3);
+//                rootNode.attachChild(g3);
+                
+                
+                //
+                
                 float cosAlpha = direction.dot(axis);
                 float alpha = FastMath.acos(cosAlpha);
 //               
                 Quaternion q = new Quaternion().fromAngleAxis(alpha, axis);
                 Vector3f reflection = q.multLocal(normal);
-                reflection.setY(0.0f);
                 
                 
                 ball.setDirection(reflection);

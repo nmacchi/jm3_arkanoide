@@ -22,6 +22,7 @@ import com.jme3.scene.shape.Sphere;
  */
 public class Ball extends Geometry{
     
+    private float speed = 0.020f;
     private static final Vector3f INITIAL_POSITION = new Vector3f(0.0f, -2.3f, 1f); 
     private static final float BALL_SCALE = 0.07f; //Radius
     private static String TEXTURE = "Textures/metal_texture_sphere.jpg";
@@ -34,6 +35,7 @@ public class Ball extends Geometry{
     private Ray ray = new Ray();
     private CollisionResults collisions = new CollisionResults();
     private Vector3f collisionContactNormal;
+    private Vector3f contactPoint;
     
     public Ball(AssetManager assetManager){
         super("ballMesh", new Sphere(16,16,BALL_SCALE,true,false));
@@ -93,8 +95,13 @@ public class Ball extends Geometry{
                 //System.out.println(collisions.getCollision(i).getGeometry().getName() + " - ");
 //                
                 if(!collisions.getCollision(i).getGeometry().getName().equals("ballMesh")){      
+//                    contactPoint = collisions.getCollision(i).getContactPoint();
+//                    collisionContactNormal = collisions.getCollision(i).getContactNormal();
+//                    return true;
                     if(this.collideWith(rootNode.getChild(collisions.getCollision(i).getGeometry().getName()).getWorldBound(), collisions) > 0){
-                        collisionContactNormal = collisions.getCollision(i).getContactNormal();
+                        System.out.println(collisions.getCollision(i).getGeometry().getName() + " - ");
+                        contactPoint = collisions.getCollision(i).getContactPoint();
+                        collisionContactNormal = collisions.getCollision(i).getContactNormal().setY(0.0f);
                         return true;
                     }   
                     //this.setBallReleased(Boolean.TRUE);
@@ -112,6 +119,22 @@ public class Ball extends Geometry{
 
     public void setCollisionContactNormal(Vector3f collisionContactNormal) {
         this.collisionContactNormal = collisionContactNormal;
+    }
+
+    public Vector3f getContactPoint() {
+        return contactPoint;
+    }
+
+    public void setContactPoint(Vector3f contactPoint) {
+        this.contactPoint = contactPoint;
+    }
+
+    public float getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(float speed) {
+        this.speed = speed;
     }
 
     
