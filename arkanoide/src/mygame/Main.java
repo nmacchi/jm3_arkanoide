@@ -45,10 +45,14 @@ public class Main extends SimpleApplication {
     private GameField gameField;
     private Geometry mark;
     private Ray ray = new Ray();
+    
+    //Used by ball rotation
+    //private Quaternion q = new Quaternion();
+    
     CollisionResults collisions = new CollisionResults();
     //Nodes 
     Node nodeArkanoide = new Node("arkanoide");
-    Node nodeBrick = new Node("brick");
+    Node nodeBrick = new Node("nodeBricks");
     Vector3f intersection = new Vector3f();
 
     public static void main(String[] args) {
@@ -121,15 +125,28 @@ public class Main extends SimpleApplication {
         if (arkanoide.isBallReleased()) {
             //if(ball.getGeometry().getWorldTranslation() != intersection){
             //System.out.println(ball.getDirection());
-            ball.move(ball.getDirection().mult(ball.getSpeed()));
+            ball.move(ball.getDirection().mult(tpf/ball.getSpeed()));
             //}
 
             //System.out.println(ball.getGeometryNameToCollision(rootNode));
 
             if (ball.hasCollision(rootNode)) {
-                Vector3f normal = ball.getCollisionContactNormal();
-                Vector3f direction = ball.getDirection().negate();
-                Vector3f axis = direction.cross(normal).normalizeLocal();
+                //ball.evaluateNewDirection();
+                
+                Geometry g = (Geometry)rootNode.getChild(ball.getCollideWith());
+                if(((Node)rootNode.getChild("nodeBricks")).hasChild(g)){
+                    //If geometry belongs to "nodeBrick" removes from root node
+                    System.out.println(g.getName());
+                    g.removeFromParent();
+                    rootNode.updateGeometricState();
+                }
+                
+                
+              
+                
+//                Vector3f normal = ball.getContactPointNormal();
+//                Vector3f direction = ball.getDirection().negate();
+//                Vector3f axis = direction.cross(normal).normalizeLocal();
 //              
                 
                 //DEBUG
@@ -160,14 +177,14 @@ public class Main extends SimpleApplication {
                 
                 //
                 
-                float cosAlpha = direction.dot(axis);
-                float alpha = FastMath.acos(cosAlpha);
-//               
-                Quaternion q = new Quaternion().fromAngleAxis(alpha, axis);
-                Vector3f reflection = q.multLocal(normal);
+//                float cosAlpha = direction.dot(normal);
+//                float alpha = FastMath.acos(cosAlpha);
+////               
+//                Quaternion q = new Quaternion().fromAngleAxis(alpha, axis);
+                //Vector3f reflection = q.multLocal(normal);
                 
                 
-                ball.setDirection(reflection);
+//                ball.setDirection(q.multLocal(normal));
 
             }
 
@@ -248,7 +265,7 @@ public class Main extends SimpleApplication {
     };
     private ActionListener actionListener = new ActionListener() {
         public void onAction(String name, boolean isPressed, float tpf) {
-            if (name.equals(KeyMappings.MAPPING_SHOOT) && !isPressed) {
+            if (name.equals(KeyMappings.MAPPING_SHOOT) && !isPressed && !arkanoide.isBallReleased()) {
                 
 //                Vector3f extent = ((BoundingBox) gameField.getChild("Floor").getWorldBound()).getExtent(new Vector3f());
 //                

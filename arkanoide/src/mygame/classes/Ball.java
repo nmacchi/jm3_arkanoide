@@ -5,11 +5,11 @@
 package mygame.classes;
 
 import com.jme3.asset.AssetManager;
-import com.jme3.bounding.BoundingSphere;
-import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.collision.CollisionResults;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.FastMath;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
@@ -22,20 +22,20 @@ import com.jme3.scene.shape.Sphere;
  */
 public class Ball extends Geometry{
     
-    private float speed = 0.020f;
+    private float speed = 0.50f;
     private static final Vector3f INITIAL_POSITION = new Vector3f(0.0f, -2.3f, 1f); 
     private static final float BALL_SCALE = 0.07f; //Radius
     private static String TEXTURE = "Textures/metal_texture_sphere.jpg";
     
     private Geometry geometry;
     private Vector3f direction;
-    
     private String collideWith;
     
     private Ray ray = new Ray();
     private CollisionResults collisions = new CollisionResults();
-    private Vector3f collisionContactNormal;
-    private Vector3f contactPoint;
+    private Vector3f contactPointNormal;
+    
+    private Quaternion q = new Quaternion();
     
     public Ball(AssetManager assetManager){
         super("ballMesh", new Sphere(16,16,BALL_SCALE,true,false));
@@ -81,31 +81,25 @@ public class Ball extends Geometry{
     }
     
     public Boolean hasCollision(Node rootNode){
-         //Ray ray = new Ray(ball.getLocalTranslation(), new Vector3f(ball.getLocalTranslation().getX() + 1, ball.getLocalTranslation().getY() , ball.getLocalTranslation().getZ() - 5.65f));
-        //Ray ray = new Ray(this.getLocalTranslation(),new Vector3f(this.getDirection().x , 0.0f , this.getDirection().z));
         ray.setOrigin(this.getLocalTranslation());
-        ray.setDirection(new Vector3f(this.getDirection().x , 0.0f , this.getDirection().z));
+        ray.setDirection(this.getDirection());
         
+        collisions.clear();
         
-//        
         rootNode.collideWith(ray, collisions);
-//
+
         if(collisions.size() > 0){
             for(int i = 0; i < collisions.size(); i++){
-                //System.out.println(collisions.getCollision(i).getGeometry().getName() + " - ");
-//                
                 if(!collisions.getCollision(i).getGeometry().getName().equals("ballMesh")){      
-//                    contactPoint = collisions.getCollision(i).getContactPoint();
-//                    collisionContactNormal = collisions.getCollision(i).getContactNormal();
-//                    return true;
                     if(this.collideWith(rootNode.getChild(collisions.getCollision(i).getGeometry().getName()).getWorldBound(), collisions) > 0){
-                        System.out.println(collisions.getCollision(i).getGeometry().getName() + " - ");
-                        contactPoint = collisions.getCollision(i).getContactPoint();
-                        collisionContactNormal = collisions.getCollision(i).getContactNormal().setY(0.0f);
+                        collideWith = collisions.getCollisionDirect(i+1).getGeometry().getName();
+                        //this.setContactPointNormal(collisions.getCollisionDirect(i+1).getContactNormal().setY(0.0f));
+                        Vector3f normal = collisions.getCollisionDirect(i+1).getContactNormal().normalizeLocal();
+                        
+                        this.evaluateNewDirection(normal);
+                        
                         return true;
                     }   
-                    //this.setBallReleased(Boolean.TRUE);
-                    //return collisions.getCollision(i).getContactPoint();
                 }           
             }
         }
@@ -113,20 +107,23 @@ public class Ball extends Geometry{
         return false;
     }
 
-    public Vector3f getCollisionContactNormal() {
-        return collisionContactNormal;
+    public Vector3f getContactPointNormal() {
+        return contactPointNormal;
     }
-
-    public void setCollisionContactNormal(Vector3f collisionContactNormal) {
-        this.collisionContactNormal = collisionContactNormal;
+    
+    public void evaluateNewDirection(Vector3f normalVector){
+  
+        Vector3f directionVector = this.getDirection();
+        Vector3f axis = directionVector.negate().cross(normalVector);
+        
+        float cosAlpha = directionVector.negate().dot(normalVector);
+        float alpha = FastMath.acos(cosAlpha);               
+        
+        this.setDirection(q.fromAngleAxis(alpha, axis).mult(normalVector).setY(0.0f));
     }
-
-    public Vector3f getContactPoint() {
-        return contactPoint;
-    }
-
-    public void setContactPoint(Vector3f contactPoint) {
-        this.contactPoint = contactPoint;
+    
+    public void setContactPointNormal(Vector3f contactPointNormal) {
+        this.contactPointNormal = contactPointNormal;
     }
 
     public float getSpeed() {
@@ -137,6 +134,12 @@ public class Ball extends Geometry{
         this.speed = speed;
     }
 
-    
+    public String getCollideWith() {
+        return collideWith;
+    }
+
+    public void setCollideWith(String collideWith) {
+        this.collideWith = collideWith;
+    }
     
 }
